@@ -11,7 +11,7 @@ setup(
 
     , install_requires =
       [ 'black'
-      , 'noseOfYeti==1.8.3'
+      , 'noseOfYeti>=1.9.1'
       ]
 
     , entry_points =
