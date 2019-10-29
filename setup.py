@@ -6,11 +6,12 @@ setup(
       name = 'noy_black'
     , version = VERSION
     , packages = ["noy_black"]
+    , include_package_data=True
 
     , python_requires = ">= 3.6"
 
     , install_requires =
-      [ 'black'
+      [ 'black==19.10b0'
       , 'noseOfYeti>=1.9.1'
       ]
 
