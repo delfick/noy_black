@@ -1,9 +1,28 @@
+from concurrent.futures import ProcessPoolExecutor
 from blib2to3.pgen2.parse import Parser, token
 from blib2to3.pgen2 import driver
 from unittest import mock
-import codecs, encodings
 import pkg_resources
+import encodings
+import codecs
+import sys
 import re
+
+grammar_file = pkg_resources.resource_filename("noy_black", "Grammar.txt")
+
+original_load_packaged_grammar = driver.load_packaged_grammar
+original_generate_pickle_name = driver._generate_pickle_name
+
+
+def _generate_pickle_name(gt, cache_dir=None):
+    result = original_generate_pickle_name(gt, cache_dir=cache_dir)
+    if result:
+        return result.replace(".pickle", ".noy.pickle")
+    return result
+
+
+def load_packaged_grammar(package, grammar_source, cache_dir=None):
+    return original_load_packaged_grammar(package, grammar_file, cache_dir=cache_dir)
 
 
 def spec_search_function(s):
@@ -22,85 +41,89 @@ def spec_search_function(s):
     )
 
 
-def main():
-    grammar_file = pkg_resources.resource_filename("noy_black", "Grammar.txt")
-
-    original_load_packaged_grammar = driver.load_packaged_grammar
-    original_generate_pickle_name = driver._generate_pickle_name
-
-    def _generate_pickle_name(gt, cache_dir=None):
-        result = original_generate_pickle_name(gt, cache_dir=cache_dir)
-        if result:
-            return result.replace(".pickle", ".noy.pickle")
-        return result
-
-    def load_packaged_grammar(package, grammar_source, cache_dir=None):
-        return original_load_packaged_grammar(
-            package, grammar_file, cache_dir=cache_dir
-        )
-
-    with mock.patch.multiple(
+def register():
+    mock.patch.multiple(
         driver,
         load_packaged_grammar=load_packaged_grammar,
         _generate_pickle_name=_generate_pickle_name,
-    ):
-        import black
+    ).start()
 
-        codecs.register(spec_search_function)
+    import black
 
-        def visit_setup_teardown_stmts(self, node):
-            yield from self.line()
-            yield from self.visit_default(node)
+    codecs.register(spec_search_function)
 
-        black.LineGenerator.visit_setup_teardown_stmts = visit_setup_teardown_stmts
+    def visit_setup_teardown_stmts(self, node):
+        yield from self.line()
+        yield from self.visit_default(node)
 
-        def visit_describe_stmt(self, node):
-            yield from self.line()
-            yield from self.visit_default(node)
+    black.LineGenerator.visit_setup_teardown_stmts = visit_setup_teardown_stmts
 
-        black.LineGenerator.visit_describe_stmt = visit_describe_stmt
+    def visit_describe_stmt(self, node):
+        yield from self.line()
+        yield from self.visit_default(node)
 
-        def visit_it_stmt(self, node):
-            yield from self.line()
-            yield from self.visit_default(node)
+    black.LineGenerator.visit_describe_stmt = visit_describe_stmt
 
-        black.LineGenerator.visit_it_stmt = visit_it_stmt
+    def visit_it_stmt(self, node):
+        yield from self.line()
+        yield from self.visit_default(node)
 
-        original_assert_equivalent = black.assert_equivalent
+    black.LineGenerator.visit_it_stmt = visit_it_stmt
 
-        def assert_equivalent(src, dst):
-            if src and re.match(r"#\s*coding\s*:\s*spec", src.split("\n")[0]):
-                from noseOfYeti.tokeniser.spec_codec import codec_from_options
+    original_assert_equivalent = black.assert_equivalent
 
-                spec_codec = codec_from_options()
+    def assert_equivalent(src, dst):
+        if src and re.match(r"#\s*coding\s*:\s*spec", src.split("\n")[0]):
+            from noseOfYeti.tokeniser.spec_codec import codec_from_options
 
-                src = spec_codec.translate(src)
-                dst = spec_codec.translate(dst)
-            original_assert_equivalent(src, dst)
+            spec_codec = codec_from_options()
 
-        original_classify = Parser.classify
+            src = spec_codec.translate(src)
+            dst = spec_codec.translate(dst)
+        original_assert_equivalent(src, dst)
 
-        def classify(self, type, value, context):
-            special = [
-                "it",
-                "ignore",
-                "context",
-                "describe",
-                "before_each",
-                "after_each",
-            ]
-            if type == token.NAME and value in special:
-                dfa, state, node = self.stack[-1]
-                if node and node[-1]:
-                    if node[-1][-1].type < 256 and node[-1][-1].type not in (
-                        token.INDENT,
-                        token.DEDENT,
-                        token.NEWLINE,
-                        token.ASYNC,
-                    ):
-                        return self.grammar.tokens.get(token.NAME)
-            return original_classify(self, type, value, context)
+    original_classify = Parser.classify
 
-        with mock.patch.object(black, "assert_equivalent", assert_equivalent):
-            with mock.patch.object(Parser, "classify", classify):
-                black.patched_main()
+    def classify(self, type, value, context):
+        special = [
+            "it",
+            "ignore",
+            "context",
+            "describe",
+            "before_each",
+            "after_each",
+        ]
+        if type == token.NAME and value in special:
+            dfa, state, node = self.stack[-1]
+            if node and node[-1]:
+                if node[-1][-1].type < 256 and node[-1][-1].type not in (
+                    token.INDENT,
+                    token.DEDENT,
+                    token.NEWLINE,
+                    token.ASYNC,
+                ):
+                    return self.grammar.tokens.get(token.NAME)
+        return original_classify(self, type, value, context)
+
+    mock.patch.object(black, "assert_equivalent", assert_equivalent).start()
+    mock.patch.object(Parser, "classify", classify).start()
+
+
+class CustomProcessPoolExecutor(ProcessPoolExecutor):
+    def __init__(self, *args, **kwargs):
+        kwargs["initializer"] = register
+        super().__init__(*args, **kwargs)
+
+
+def main():
+    many = sum(1 for s in sys.argv[1:] if not s.startswith("-")) > 1
+    register()
+    import black
+
+    if many:
+
+        mock.patch.object(
+            black, "ProcessPoolExecutor", CustomProcessPoolExecutor
+        ).start()
+
+    black.patched_main()
