@@ -120,7 +120,7 @@ def main():
     register()
     import black
 
-    if many:
+    if many and sys.version_info.minor > 6:
 
         mock.patch.object(
             black, "ProcessPoolExecutor", CustomProcessPoolExecutor

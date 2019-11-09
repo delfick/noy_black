@@ -46,8 +46,11 @@ so new versions of black will mean I have to update my version of the Grammar.
 Changelog
 ---------
 
+0.1.5 - TBD
+    * Make it compatible with python3.6
+
 0.1.4 - 9 November 2019
-   * Make it compatible with python3.8
+    * Make it compatible with python3.8
 
 0.1.3 - 30 October 2019
-   * Initial release
+    * Initial release
