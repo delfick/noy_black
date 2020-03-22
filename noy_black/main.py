@@ -74,10 +74,9 @@ def register():
 
     def assert_equivalent(src, dst):
         if src and re.match(r"#\s*coding\s*:\s*spec", src.split("\n")[0]):
-            from noseOfYeti.tokeniser.spec_codec import codec_from_options
-
-            spec_codec = codec_from_options()
-
+            m = __import__("noseOfYeti.tokeniser.spec_codec")
+            spec_codec = m.tokeniser.spec_codec.codec()
+            spec_codec.register()
             src = spec_codec.translate(src)
             dst = spec_codec.translate(dst)
         original_assert_equivalent(src, dst)

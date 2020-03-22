@@ -46,6 +46,9 @@ so new versions of black will mean I have to update my version of the Grammar.
 Changelog
 ---------
 
+0.2.0 - TBD
+    * Now only support noseOfYeti>=2.0.0
+
 0.1.5 - 9 November 2019
     * Make it compatible with python3.6
 
