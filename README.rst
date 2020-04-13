@@ -18,7 +18,7 @@ check that the ast is equivalent before and after formatting with black.
 Caveats
 -------
 
-Because ``it``, ``ignore``, ``context``, ``describe``, ``before_each`` and
+Because ``it``, ``ignore``, ``describe``, ``before_each`` and
 ``after_each`` are special keywords only for noseOfYeti, you can still use these
 words as variable names. However you cannot start a line with any of these
 keywords or black will get confused.
@@ -28,10 +28,10 @@ For example:
 .. code-block:: python
 
    # This will confuse black
-   context = 1
+   describe = 1
 
    # This will not confuse black
-   one, context = 1, 2
+   one, describe = 1, 2
 
    # this will also not confuse black
    for it in [1, 2]:
