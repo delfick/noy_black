@@ -46,6 +46,9 @@ so new versions of black will mean I have to update my version of the Grammar.
 Changelog
 ---------
 
+0.2.1 - 22 November 2020
+    * Upgrade version of black to use with this
+
 0.2.0 - 22 March 2020
     * Now only support noseOfYeti>=2.0.0
 

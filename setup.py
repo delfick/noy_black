@@ -11,7 +11,7 @@ setup(
     , python_requires = ">= 3.6"
 
     , install_requires =
-      [ 'black==19.10b0'
+      [ 'black==20.8b1'
       , 'noseOfYeti>=2.0.0'
       ]
 
