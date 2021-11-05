@@ -5,8 +5,9 @@ from unittest import mock
 import pkg_resources
 import encodings
 import codecs
-import sys
 import re
+
+registered = False
 
 grammar_file = pkg_resources.resource_filename("noy_black", "Grammar.txt")
 
@@ -42,6 +43,12 @@ def spec_search_function(s):
 
 
 def register():
+    global registered
+    if registered:
+        return
+
+    registered = True
+
     mock.patch.multiple(
         driver,
         load_packaged_grammar=load_packaged_grammar,
@@ -115,14 +122,9 @@ class CustomProcessPoolExecutor(ProcessPoolExecutor):
 
 
 def main():
-    many = sum(1 for s in sys.argv[1:] if not s.startswith("-")) > 1
     register()
+
     import black
 
-    if many and sys.version_info.minor > 6:
-
-        mock.patch.object(
-            black, "ProcessPoolExecutor", CustomProcessPoolExecutor
-        ).start()
-
+    mock.patch.object(black, "ProcessPoolExecutor", CustomProcessPoolExecutor).start()
     black.patched_main()

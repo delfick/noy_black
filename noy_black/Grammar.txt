@@ -12,9 +12,9 @@ file_input: (NEWLINE | stmt)* ENDMARKER
 single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
 eval_input: testlist NEWLINE* ENDMARKER
 
-decorator: '@' dotted_name [ '(' [arglist] ')' ] NEWLINE
+decorator: '@' namedexpr_test NEWLINE
 decorators: decorator+
-decorated: decorators (async_funcdef | classdef | funcdef | noy_stmt)
+decorated: decorators (classdef | funcdef | async_funcdef | noy_stmt)
 async_funcdef: ASYNC (funcdef | it_stmt | setup_teardown_stmts)
 funcdef: 'def' NAME parameters ['->' test] ':' suite
 parameters: '(' [typedargslist] ')'
@@ -77,7 +77,7 @@ small_stmt: (expr_stmt | print_stmt  | del_stmt | pass_stmt | flow_stmt |
              import_stmt | global_stmt | exec_stmt | assert_stmt)
 expr_stmt: testlist_star_expr (annassign | augassign (yield_expr|testlist) |
                      ('=' (yield_expr|testlist_star_expr))*)
-annassign: ':' test ['=' test]
+annassign: ':' test ['=' (yield_expr|testlist_star_expr)]
 testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']
 augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
             '<<=' | '>>=' | '**=' | '//=')
@@ -157,14 +157,14 @@ testlist_gexp: (namedexpr_test|star_expr) ( old_comp_for | (',' (namedexpr_test|
 lambdef: 'lambda' [varargslist] ':' test
 trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME
 subscriptlist: subscript (',' subscript)* [',']
-subscript: test | [test] ':' [test] [sliceop]
+subscript: test [':=' test] | [test] ':' [test] [sliceop]
 sliceop: ':' [test]
 exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']
 testlist: test (',' test)* [',']
 dictsetmaker: ( ((test ':' test | '**' expr)
                  (comp_for | (',' (test ':' test | '**' expr))* [','])) |
-                ((test | star_expr)
-		 (comp_for | (',' (test | star_expr))* [','])) )
+                ((test [':=' test] | star_expr)
+		 (comp_for | (',' (test [':=' test] | star_expr))* [','])) )
 
 classdef: 'class' NAME ['(' [arglist] ')'] ':' suite
 
