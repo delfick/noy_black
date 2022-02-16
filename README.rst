@@ -46,6 +46,9 @@ so new versions of black will mean I have to update my version of the Grammar.
 Changelog
 ---------
 
+0.3.1 - TBD
+    * Upgrade black to 22.1.0
+
 0.3.0 - 6 November 2021
     * Upgrade black to 21.10b0
 
