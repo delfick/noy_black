@@ -43,8 +43,19 @@ For example:
 Also, this works by defining the whole python grammar plus some extra grammar
 so new versions of black will mean I have to update my version of the Grammar.
 
+Doesn't work anymore!
+---------------------
+
+Since the stable version of black now comes as binary .so files, the hack that
+makes this work no longer works and you need to do something like::
+
+    python -m pip install --no-binary black noy_black
+
 Changelog
 ---------
+
+0.3.2 - TBD
+    * Fixes for new version of black
 
 0.3.1 - 16 February 2022
     * Upgrade black to 22.1.0

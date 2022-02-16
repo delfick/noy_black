@@ -108,7 +108,7 @@ def register():
                     token.NEWLINE,
                     token.ASYNC,
                 ):
-                    return self.grammar.tokens.get(token.NAME)
+                    return [self.grammar.tokens.get(token.NAME)]
         return original_classify(self, type, value, context)
 
     mock.patch.object(black, "assert_equivalent", assert_equivalent).start()
