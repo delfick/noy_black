@@ -5,6 +5,7 @@ from unittest import mock
 import pkg_resources
 import encodings
 import codecs
+import sys
 import re
 
 registered = False
@@ -125,6 +126,16 @@ def main():
     register()
 
     import black
+
+    if black.__file__.endswith(".so"):
+        print("!" * 80)
+        print("!!! black installed as a binary installation")
+        print("!!! This version of noy_black requires python magic that won't work on this black")
+        print(
+            "!!! you need to uninstall black and do `python -m pip install --no-binary black black"
+        )
+        print("!!! To install black in a way that we can patch for noy_black to work")
+        sys.exit(1)
 
     mock.patch.object(black, "ProcessPoolExecutor", CustomProcessPoolExecutor).start()
     black.patched_main()
