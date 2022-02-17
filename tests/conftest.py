@@ -1,3 +1,4 @@
+from textwrap import dedent
 from pathlib import Path
 import subprocess
 import pytest
@@ -21,6 +22,25 @@ def example_output():
 @pytest.fixture()
 def run_formatter():
     def run_formatter(directory):
-        subprocess.run([str(Path(sys.executable).parent / "noy_black"), str(directory)], check=True)
+        with open(directory / "pyproject.toml", "w") as fle:
+            print(
+                dedent(
+                    """
+            [tool.black]
+            line-length = 100
+            """
+                ),
+                file=fle,
+            )
+
+        subprocess.run(
+            [
+                str(Path(sys.executable).parent / "noy_black"),
+                "--target-version",
+                "py310",
+                str(directory),
+            ],
+            check=True,
+        )
 
     return run_formatter

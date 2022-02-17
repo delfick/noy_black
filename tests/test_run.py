@@ -11,7 +11,7 @@ describe "it can format":
             with open(test, "w") as fle:
                 print(example_input, file=fle)
 
-            run_formatter(working)
+            run_formatter(Path(working))
 
             with open(test) as fle:
                 assert fle.read() == example_output

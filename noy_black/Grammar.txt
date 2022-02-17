@@ -250,7 +250,7 @@ guard: 'if' namedexpr_test
 patterns: pattern (',' pattern)* [',']
 pattern: (expr|star_expr) ['as' expr]
 
-it_stmt: ('it' | 'ignore') STRING [',' NAME (',' NAME)*] ':' suite
+it_stmt: ('it' | 'ignore') STRING (',' NAME [':' [test]])* ':' ['->' test] NEWLINE INDENT stmt+ DEDENT
 setup_teardown_stmts: ('before_each' | 'after_each') ':' suite
 describe_stmt: ('context' | 'describe') [dotted_name ','] STRING ':' suite
 noy_stmt: setup_teardown_stmts | it_stmt  | describe_stmt

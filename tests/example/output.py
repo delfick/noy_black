@@ -1,6 +1,19 @@
 # coding: spec
 
-it "asdfasdfasdf":
+import typing as tp
+
+
+describe "it can format":
+    async it "works", example_input, example_output, run_formatter:
+        pass
+
+    it "works2", example_input: str, run_formatter: bool:
+        pass
+
+    it "works3", example_input: str, example_output: tp.Optional[list[str]], run_formatter: bool:
+        pass
+
+it "asdfasdfasdf", a: str:
     pass
 
 ignore "asdfasdfasdf2":
@@ -18,7 +31,7 @@ describe "things":
 
         assert wat()
 
-    async it "does", a:
+    async it "does", a: str, b: int:
         one = 2
         assert one == 2
 
