@@ -36,6 +36,15 @@ describe "things":
         assert one == 2
 
 
+describe "keywords":
+    it "doesn't get confused":
+        result.it = 1
+        result.ignore = 2
+        result.describe = 3
+        result.after_each = 4
+        result.before_each = 5
+
+
 describe "with_setup":
     async before_each:
 
