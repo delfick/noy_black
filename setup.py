@@ -21,6 +21,13 @@ setup(
         ]
       }
 
+    , extras_require =
+      { 'tests':
+        [ 'pytest>=7.0.1'
+        , 'noseOfYeti>=2.3.1'
+        ]
+      }
+
     , author = 'Stephen Moore'
     , license = 'MIT'
     , author_email = 'delfick755@gmail.com'
