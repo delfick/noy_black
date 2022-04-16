@@ -127,7 +127,7 @@ def main():
 
     import black
 
-    if black.__file__.endswith(".so"):
+    if black.COMPILED:
         print("!" * 80)
         print("!!! black installed as a binary installation")
         print("!!! This version of noy_black requires python magic that won't work on this black")
