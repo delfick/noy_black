@@ -54,6 +54,9 @@ makes this work no longer works and you need to do something like::
 Changelog
 ---------
 
+0.3.4 - 30 April 2022
+    * Upgrade black
+
 0.3.3 - 17 February 2022
     * Support typed parameters for it/ignore blocks
 
