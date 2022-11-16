@@ -1,3 +1,10 @@
+Deprecated
+==========
+
+The functionality of this is now part of noseOfYeti itself since version 2.4.0
+
+https://noseofyeti.readthedocs.io/en/latest/api/usage.html#black
+
 NoseOfYeti aware black
 ======================
 
